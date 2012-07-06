@@ -219,7 +219,7 @@ sub gather_nn_jmx{
     my $bean=shift;
     my $qry;
     if ($bean eq 'NameNodeInfo'){
-	$qry='Hadoop%3Aservice%3DNameNode%2Cname%3DNameNodeInfo';
+	$qry='hadoop:service=NameNode,name=NameNodeInfo';
     }
     my $jmx_url= "http://".$self->get_namenode.":".$self->get_namenode_port."/jmx?qry=$qry";
     my $response = $self->{'ua'}->get($jmx_url);
@@ -236,7 +236,7 @@ sub parse_nn_jmx{
     my $json=new JSON();
     my $json_text = $json->allow_nonref->utf8->relaxed->escape_slash->loose->allow_singlequote->allow_barekey->pretty->decode($nn_content);
     foreach my $bean (@{$json_text->{beans}}){
-	if ($bean->{name} eq "Hadoop:service=NameNode,name=NameNodeInfo"){
+	if ($bean->{name} eq "hadoop:service=NameNode,name=NameNodeInfo"){
 	    foreach my $var (keys %{$bean}){
 		$self->{"NameNodeInfo_$var"}=$bean->{$var};
 	    }
@@ -253,7 +253,7 @@ sub gather_jt_jmx{
     my $bean=shift;
     my $qry;
     if ($bean eq "JobTrackerInfo"){
-	$qry='Hadoop%3Aservice%3DJobTracker%2Cname%3DJobTrackerInfo';
+	$qry='hadoop:service=JobTracker,name=JobTrackerInfo';
     }
     my $jmx_url= "http://".$self->get_jobtracker.":".$self->get_jobtracker_port."/jmx?qry=$qry";
     my $response = $self->{'ua'}->get($jmx_url);
@@ -274,7 +274,7 @@ sub parse_jt_jmx{
 	foreach my $var (keys %{$bean}){
 	    $self->{"JobTrackerInfo_$var"}=$bean->{$var};
 	}
-	if ($bean->{name} eq "Hadoop:service=JobTracker,name=JobTrackerInfo"){
+	if ($bean->{name} eq "hadoop:service=JobTracker,name=JobTrackerInfo"){
 	    $self->{'JobTrackerInfo_AliveNodesInfoJson'}=$json->allow_nonref->utf8->relaxed->escape_slash->loose->allow_singlequote->allow_barekey->pretty->decode($bean->{AliveNodesInfoJson});
 	    $self->{'JobTrackerInfo_BlacklistedNodesInfoJson'}=$json->allow_nonref->utf8->relaxed->escape_slash->loose->allow_singlequote->allow_barekey->pretty->decode($bean->{BlacklistedNodesInfoJson});
 	    $self->{'JobTrackerInfo_GraylistedNodesInfoJson'}=$json->allow_nonref->utf8->relaxed->escape_slash->loose->allow_singlequote->allow_barekey->pretty->decode($bean->{GraylistedNodesInfoJson});
@@ -287,7 +287,7 @@ sub gather_rm_jmx{
     my $bean=shift;
     my $qry;
     if ($bean eq "RMNMInfo"){
-	$qry='Hadoop%3Aservice%3DResourceManager%2Cname%3DRMNMInfo';
+	$qry='hadoop:service=ResourceManager,name=RMNMInfo';
     }
     my $jmx_url= "http://".$self->get_resourcemanager.":".$self->get_resourcemanager_port."/jmx?qry=$qry";
     my $response = $self->{'ua'}->get($jmx_url);
@@ -307,7 +307,7 @@ sub parse_rm_jmx{
 	foreach my $var (keys %{$bean}){
 	    $self->{"RMNMInfo_$var"}=$bean->{$var};
 	}
-	if ($bean->{name} eq "Hadoop:service=ResourceManager,name=RMNMInfo"){
+	if ($bean->{name} eq "hadoop:service=ResourceManager,name=RMNMInfo"){
 	    $self->{'RMNMInfo_LiveNodeManagers'}=$json->allow_nonref->utf8->relaxed->escape_slash->loose->allow_singlequote->allow_barekey->pretty->decode($bean->{LiveNodeManagers});
 	}
 	
