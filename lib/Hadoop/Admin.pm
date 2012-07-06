@@ -1,5 +1,8 @@
 use strict;
 package Hadoop::Admin;
+{
+  $Hadoop::Admin::VERSION = '0.4';
+}
 use warnings;
 use Moose;
 use LWP::UserAgent;
@@ -95,70 +98,7 @@ has '_test_resourcemanagerinfo' => (
 
 # ABSTRACT: Module for administration of Hadoop clusters
 
-=head1 SYNOPSIS
 
-    use Hadoop::Admin; 
-
-    my $cluster=Hadoop::Admin->new({
-      'namenode'          => 'namenode.host.name',
-      'jobtracker'        => 'jobtracker.host.name',
-    });
-
-    print $cluster->datanode_live_list();
-
-
-=head1 DESCRIPTION
-
-This module connects to Hadoop servers using http.  The JMX Proxy
-Servlet is queried for specific mbeans.
-
-This module requires Hadoop the changes in
-https://issues.apache.org/jira/browse/HADOOP-7144.  They are available
-in versions 0.20.204.0, 0.23.0 or later.
-
-=head1 INTERFACE FUNCTIONS
-
-=cut
-
-=pod
-
-=head2 new ()
-
-=over 4
-
-=item Description
-
-Create a new instance of the Hadoop::Admin class.  
-
-The method requires a hash containing at minimum one of the
-namenode's, the resourcemanager's, and the jobtracker's hostnames.
-Optionally, you may provide a socksproxy for the http connection.  Use
-of both a jobtracker and resourcemanger is prohibited.  It is not a
-valid cluster configuration to have both a jobtracker and a
-resourcemanager.
-
-Creation of this object will cause an immediate querry to servers
-provided to the constructor.
-
-=item namenode => <hostname>
-
-=item namenode_port => <port number>
-
-=item jobtracker => <hostname>
-
-=item jobtracker_port => <port number>
-
-=item resourcemanager => <hostname>
-
-=item resourcemanager_port => <port number>
-
-=item socksproxy => <hostname>
-
-=item socksproxy_port => <port number>
-
-=back
-
-=cut
 sub BUILD{
 
     my $self=shift;
@@ -221,90 +161,22 @@ sub BUILD{
     return $self;
 }
 
-=pod
-
-=head2 datanode_live_list ()
-
-=over 4
-
-=item Description
-
-Returns a list of the current live DataNodes.
-
-=item Return values
-
-Array containing hostnames.
-
-=back
-
-=cut
 sub datanode_live_list{
     my $self=shift;
     return keys %{$self->{'NameNodeInfo_LiveNodes'}};
 }
 
-=pod
-
-=head2 datanode_dead_list ()
-
-=over 4
-
-=item Description
-
-Returns a list of the current dead DataNodes.
-
-=item Return values
-
-Array containing hostnames.
-
-=back
-
-=cut
 sub datanode_dead_list{
     my $self=shift;
     return keys %{$self->{'NameNodeInfo_DeadNodes'}};
 }
 
-=pod
-
-=head2 datanode_decom_list ()
-
-=over 4
-
-=item Description
-
-Returns a list of the currently decommissioning DataNodes.
-
-=item Return values
-
-Array containing hostnames.
-
-=back
-
-=cut
 sub datanode_decom_list{
     my $self=shift;
     return keys %{$self->{'NameNodeInfo_DecomNodes'}};
 }
 
 
-=pod
-
-=head2 nodemanager_live_list ()
-
-=over 4
-
-=item Description
-
-Returns a list of the current live NodeManagers.
-
-=item Return values
-
-Array containing hostnames.
-
-=back
-
-=cut
 sub nodemanager_live_list{
     my $self=shift;
     my @returnValue=();
@@ -314,23 +186,6 @@ sub nodemanager_live_list{
     return @returnValue;
 }
 
-=pod
-
-=head2 tasktracker_live_list ()
-
-=over 4
-
-=item Description
-
-Returns a list of the current live TaskTrackers.
-
-=item Return values
-
-Array containing hostnames.
-
-=back
-
-=cut
 sub tasktracker_live_list{
     my $self=shift;
     my @returnValue=();
@@ -341,23 +196,6 @@ sub tasktracker_live_list{
     return @returnValue;
 }
 
-=pod
-
-=head2 tasktracker_blacklist_list ()
-
-=over 4
-
-=item Description
-
-Returns a list of the current blacklisted TaskTrackers.
-
-=item Return values
-
-Array containing hostnames.
-
-=back
-
-=cut
 sub tasktracker_blacklist_list{
     my $self=shift;
     my @returnValue=();
@@ -367,23 +205,6 @@ sub tasktracker_blacklist_list{
     return @returnValue;
 }
 
-=pod
-
-=head2 tasktracker_graylist_list ()
-
-=over 4
-
-=item Description
-
-Returns a list of the current graylisted TaskTrackers.
-
-=item Return values
-
-Array containing hostnames.
-
-=back
-
-=cut
 sub tasktracker_graylist_list{
     my $self=shift;
     my @returnValue=();
@@ -494,6 +315,175 @@ sub parse_rm_jmx{
 }
 
 1;
+
+
+__END__
+=pod
+
+=head1 NAME
+
+Hadoop::Admin - Module for administration of Hadoop clusters
+
+=head1 VERSION
+
+version 0.4
+
+=head1 SYNOPSIS
+
+    use Hadoop::Admin; 
+
+    my $cluster=Hadoop::Admin->new({
+      'namenode'          => 'namenode.host.name',
+      'jobtracker'        => 'jobtracker.host.name',
+    });
+
+    print $cluster->datanode_live_list();
+
+=head1 DESCRIPTION
+
+This module connects to Hadoop servers using http.  The JMX Proxy
+Servlet is queried for specific mbeans.
+
+This module requires Hadoop the changes in
+https://issues.apache.org/jira/browse/HADOOP-7144.  They are available
+in versions 0.20.204.0, 0.23.0 or later.
+
+=head1 INTERFACE FUNCTIONS
+
+=head2 new ()
+
+=over 4
+
+=item Description
+
+Create a new instance of the Hadoop::Admin class.  
+
+The method requires a hash containing at minimum one of the
+namenode's, the resourcemanager's, and the jobtracker's hostnames.
+Optionally, you may provide a socksproxy for the http connection.  Use
+of both a jobtracker and resourcemanger is prohibited.  It is not a
+valid cluster configuration to have both a jobtracker and a
+resourcemanager.
+
+Creation of this object will cause an immediate querry to servers
+provided to the constructor.
+
+=item namenode => <hostname>
+
+=item namenode_port => <port number>
+
+=item jobtracker => <hostname>
+
+=item jobtracker_port => <port number>
+
+=item resourcemanager => <hostname>
+
+=item resourcemanager_port => <port number>
+
+=item socksproxy => <hostname>
+
+=item socksproxy_port => <port number>
+
+=back
+
+=head2 datanode_live_list ()
+
+=over 4
+
+=item Description
+
+Returns a list of the current live DataNodes.
+
+=item Return values
+
+Array containing hostnames.
+
+=back
+
+=head2 datanode_dead_list ()
+
+=over 4
+
+=item Description
+
+Returns a list of the current dead DataNodes.
+
+=item Return values
+
+Array containing hostnames.
+
+=back
+
+=head2 datanode_decom_list ()
+
+=over 4
+
+=item Description
+
+Returns a list of the currently decommissioning DataNodes.
+
+=item Return values
+
+Array containing hostnames.
+
+=back
+
+=head2 nodemanager_live_list ()
+
+=over 4
+
+=item Description
+
+Returns a list of the current live NodeManagers.
+
+=item Return values
+
+Array containing hostnames.
+
+=back
+
+=head2 tasktracker_live_list ()
+
+=over 4
+
+=item Description
+
+Returns a list of the current live TaskTrackers.
+
+=item Return values
+
+Array containing hostnames.
+
+=back
+
+=head2 tasktracker_blacklist_list ()
+
+=over 4
+
+=item Description
+
+Returns a list of the current blacklisted TaskTrackers.
+
+=item Return values
+
+Array containing hostnames.
+
+=back
+
+=head2 tasktracker_graylist_list ()
+
+=over 4
+
+=item Description
+
+Returns a list of the current graylisted TaskTrackers.
+
+=item Return values
+
+Array containing hostnames.
+
+=back
+
 =head1 KNOWN BUGS
 
 None known at this time.  Please log issues at: 
@@ -510,11 +500,7 @@ Module available on CPAN as Hadoop::Admin:
 
 http://search.cpan.org/~cwimmer/
 
-=cut
-
-=begin Pod::Coverage
-
-gather_jt_jmx
+=for Pod::Coverage gather_jt_jmx
 gather_nn_jmx
 gather_rm_jmx
 parse_jt_jmx
@@ -522,4 +508,17 @@ parse_nn_jmx
 parse_rm_jmx
 BUILD
 
-=end Pod::Coverage
+=head1 AUTHOR
+
+Charles A. Wimmmer (charles@wimmer.net)
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is Copyright (c) 2012 by Charles A. Wimmer.
+
+This is free software, licensed under:
+
+  The (three-clause) BSD License
+
+=cut
+
